@@ -1,5 +1,5 @@
 # learning-pi-bot
 
-# Teaching a robot to walk using Q-learning
+Teaching a robot to walk using Q-learning
 
-# More details coming soon
+More details coming soon
