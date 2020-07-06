@@ -1,3 +1,5 @@
+# Test the distance sensor
+
 from elsi_ultrasonic import *
 
 uC = Ultrasonic(echo=24, trigger=23)  

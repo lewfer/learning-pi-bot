@@ -6,7 +6,7 @@
 from learnbot import *
 
 # Create the bot
-bot = Learnbot()
+bot = Learnbot([[170, 90], [135, 90, 0]])
 
 # Start it up
 bot.wakeSlowly(2) 

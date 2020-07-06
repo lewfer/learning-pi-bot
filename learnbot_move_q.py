@@ -47,6 +47,7 @@ def moveNextBest(bot, state):
 def move():
     # Make a random initial movement
     state = bot.moveRandom()
+    print(state)
 
     # Now loop, moving to the next best position
     while True:
@@ -60,7 +61,7 @@ def move():
 # -------------------------------------------------------------------------------------------------
 
 # Create the bot
-bot = Learnbot()
+bot = Learnbot([[170, 90], [135, 90, 0]])
 
 
 # Start it up
