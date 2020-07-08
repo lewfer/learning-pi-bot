@@ -27,6 +27,7 @@ from joint import *
 from threadhelper import *
 import random
 
+from settings import *
 
 # Class
 # -------------------------------------------------------------------------------------------------
@@ -43,11 +44,20 @@ class Learnbot():
         self.num_joints = len(joints)
 
         # Add the joints and angles to the arrays
-        pin = 0
-        for joint in joints:
+        pin = SERVO_PIN_START
+        self.num_states = 1
+        for angles in joints:
             self.joints.append((Joint(pin)))
-            self.angles.append(joint)
+            self.angles.append(angles)
+            self.num_states *= len(angles)
             pin += 1
+
+        # Confirm number of states
+        print("Num states", self.num_states)
+
+        # Generate a list of state codes
+        self.state_codes = [self.stateToCode(state) for state in range(self.num_states)]
+        print("State codes:", self.state_codes)
 
     def moveToDefaultPosition(self):  
         '''Move all joints to their default position.  This moves all servos instantly to their default positions.
@@ -65,7 +75,7 @@ class Learnbot():
     def legsUp(self):
         '''Lift all the legs up - NOT TESTED'''
         for joint in self.joints:
-            joint.moveTo(newAngle=0, secs=0.2)
+            joint.moveTo(newAngle=0, secs=JOINT_MOVE_SECS)
 
     def moveToPosition(self, positions):
         '''Move servos to the positions given.  Positions is a list of the positions in the positions list'''
@@ -74,7 +84,8 @@ class Learnbot():
         threads = []
         for joint in range(len(positions)):
             position = positions[joint]
-            threads.append(Thread(target=self.joints[joint].moveTo, kwargs={"newAngle":self.angles[joint][position], "secs":1}))
+            #!!threads.append(Thread(target=self.joints[joint].moveTo, kwargs={"newAngle":self.angles[joint][position], "secs":JOINT_MOVE_SECS}))
+            threads.append(Thread(target=self.joints[joint].moveDirectTo, kwargs={"newAngle":self.angles[joint][position]}))
 
         # Move all joints together
         runThreadsTogether(threads)
@@ -100,11 +111,7 @@ class Learnbot():
         """Code is the coded positions, e.g. 12 means move first servo to position 1 and second servo to position 2"""
 
         # Requested positions
-        requested_positions = []
-
-        for i in range(len(positions_code)):
-            this_position = int(positions_code[i])
-            requested_positions.append(this_position)
+        requested_positions = self.codeToPositions(positions_code)
 
         # Move it
         self.moveToPosition(requested_positions)    
@@ -114,16 +121,39 @@ class Learnbot():
 
         return state
 
+    def codeToPositions(self, positions_code):
+        """Convert the code to a list of positions.  E.g. "12" returns [1,2]"""
+
+        # Pull out positions from the code
+        requested_positions = []
+        for i in range(len(positions_code)):
+            this_position = int(positions_code[i])
+            requested_positions.append(this_position)
+        return requested_positions
+
+    def stateToCode(self, state):
+        """Convert the state to a code.  E.g. state 1 could be "01", depending on the servo setup"""
+
+        multiplier = 1
+        code = ""
+        for i in range(self.num_joints-1, -1, -1):
+            num_angles = len(self.angles[i])
+            code += str(int((state / multiplier ) % num_angles))
+            multiplier *= len(self.angles[i])
+
+        # Return the reversed code
+        return code [::-1]
+
 
     def state(self, positions):
-        '''Get the unique state index from the list of servo positions'''
+        '''Get the unique state index from the list of servo positions.  E.g. [0,2,1] might be state 7'''
 
         #print(positions)
         # Get state from the positions of each joint
-        multiplyer = 1
+        multiplier = 1
         state = 0
         for i in range(self.num_joints-1, -1, -1):
-            state += positions[i]*multiplyer
-            multiplyer *= len(self.angles[i])
+            state += positions[i]*multiplier
+            multiplier *= len(self.angles[i])
 
         return state

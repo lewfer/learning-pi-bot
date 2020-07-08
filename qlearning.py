@@ -8,7 +8,7 @@
 import numpy as np
 
 # Pandas gives useful functionality to export to Excel
-import pandas as pd
+#import pandas as pd
 
 # For choosing random numbers
 import random

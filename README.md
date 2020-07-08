@@ -47,6 +47,10 @@ Moves the robot according to the Q-table.  The Q-table contains the learnt patte
 
 ## Process
 
-Set up the robot.  Run learnbot_learn_r.py to learn the best individual movements.  Take the R-table produced and plug it into learnbot_learn_q.py.  Run this.  Take the Q-table produced and plug it into learnbot_move_q.py.  Run this and the robot *should* propel itself forwards.  
+Set up the physical robot.  
+
+Run learnbot_learn_r.py to learn the best individual movements.  
+Run learnbot_learn_q.py to learn the best sequences.  
+Run learnbot_move_q.py and the robot *should* propel itself forwards.  
 
 You will need to experiment with physical design and the training parameters for this to work well!
