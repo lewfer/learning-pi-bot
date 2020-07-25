@@ -2,14 +2,19 @@
 # SERVO_PIN_START: Number of first pin used on servo bonnet.  Assumes sequence from that pin
 
 # Use these settings for single claw operation
-#SERVOS = [[170, 90], [135, 90, 0]]
-#SERVO_PIN_START = 0
+SERVOS = [[170, 90], [135, 90, 0]]
+SERVO_PIN_START = 0
 
 
 # Use these settings for 4-legged operation
-SERVOS = [[90,50], [90,130], [90,50], [90,130]]
-SERVO_PIN_START = 2
+#SERVOS = [[90,50], [90,130], [90,50], [90,130]]
+#SERVOS = [[130,50], [50,130], [130,50], [50,130]]
+#SERVOS = [[110,70], [70,130], [110,70], [70,110]]
+#SERVO_PIN_START = 2
 
+# Use these settings for 4-legged + weight operation
+#SERVOS = [[130,50], [50,130], [130,50], [50,130], [20, 160]]
+#SERVO_PIN_START = 2
 
 
 # Number of seconds for each joint movement
@@ -32,10 +37,10 @@ LEARN_Q_EPISODES = 2000
 
 # Maximum movement that we will register (in cm) when learning R
 # If more than this then we must have an error (e.g. ultrasonic sensor misreading)
-LEARN_R_MAX_RECORDED_MOVE = 8
+LEARN_R_MAX_RECORDED_MOVE = 20
 
 # Number of seconds to wait between movements
-LEARN_R_WAIT_BETWEEN_MOVES = 0.5
+RECORD_WAIT_BETWEEN_MOVES = 1
 
 # Number of seconds to wait between movements
 MOVE_Q_WAIT_BETWEEN_MOVES = 1

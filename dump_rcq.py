@@ -38,11 +38,11 @@ print("\n\nC:")
 printMatrix(c)
 
 # Compute mean rewards  
-r = r/c
-r= np.nan_to_num(r)
-    
 print("\n\nMean R:")
-printMatrix(r)
+with np.errstate(invalid='ignore', divide='ignore'):
+    r = r/c
+    r= np.nan_to_num(r)
+    printMatrix(r)
 
 
 print("\n\nQ:")

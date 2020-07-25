@@ -72,8 +72,9 @@ class Matrix():
         # Get the row corresponding to the given state, which gives the possible next states
         row = self.matrix[state]
 
-        # Find the states that have a reward >=0.  These are the only valid states.  We use [0] because np.where returns a tuple
-        actions, next_states = np.where(row >= 0)
+        # Find the states that have a reward >=0.  These are the only valid states. 
+        #actions, next_states = np.where(row >= 0)  #!! for some problems -ve is invalid, but not for all
+        actions, next_states = np.where(row == row)
 
         # Zip up tuples containing the action,next_state pairs
         return list(zip(actions, next_states))

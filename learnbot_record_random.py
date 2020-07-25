@@ -1,6 +1,6 @@
-# Learnbot Learn R
+# Learnbot Record Random
 # 
-# # Learn values for R by trying out random moves and recording rewards for distance moved.
+# Make random moves and recording  distance moved.
 
 import numpy as np
 #import os
@@ -18,6 +18,7 @@ import readkeys as kb
 
 import csv
 
+MOVEMENTS_FILENAME = 'movements' + str(len(SERVOS)) + '.csv'
 
 np.set_printoptions(suppress=True, edgeitems=30, linewidth=200, threshold=np.inf)
 
@@ -26,34 +27,13 @@ uC = Ultrasonic(echo=ULTRASONIC_ECHO_PIN, trigger=ULTRASONIC_TRIGGER_PIN)
 
 
 
-def trainR(bot, R, C):
-    '''Try random movements.  When we find a from-to movement that actually moves the robot, record it here'''
+def recordRandom(bot):
+    '''Make random movements.  When we find a from-to movement that actually moves the robot, record it here'''
 
-    # Load previously stored R matrix, if any
-    try:
-        r = np.load("r.npy")
-        R = r
-    except:
-        pass
-
-    # Load previously stored C matrix, if any
-    try:
-        c = np.load("c.npy")
-        C = c
-    except:
-        pass    
-  
     # Open the movements file to record individual movements and distances
-    with open('movements.csv', 'a', newline='') as movementsfile:
+    with open(MOVEMENTS_FILENAME, 'a', newline='') as movementsfile:
         movementsfilewriter = csv.writer(movementsfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         #movementsfilewriter.writerow("from", "to", "distance")
-
-        print("R")
-        print(R)  
-        
-        print("Counts")
-        print(C)
-        print("Total movements", np.sum(C))
 
         # Get initial position and distance reading
         from_index = bot.moveRandom()
@@ -61,9 +41,6 @@ def trainR(bot, R, C):
 
         # Run a few experiments
         while True:
-            # Print current R
-            #os.system('clear')
-            print(R.round(2))
 
             # Get the next random movement
             to_index = bot.moveRandom()
@@ -75,48 +52,39 @@ def trainR(bot, R, C):
             # Print from, to and distance 
             print("Moved {0}->{1}: {2}cm ({3}cm->{4}cm)".format(bot.state_codes[from_index], bot.state_codes[to_index], round(dist_moved,2), round(last_dist, 2), round(dist,2)))
 
-            # Record from, to and distance to the movements file
-            movementsfilewriter.writerow([bot.state_codes[from_index], bot.state_codes[to_index], round(dist_moved,2)])
-
-            # Add distance moved to the correct cell in the matrix, and long as it's not too erratic
+            # Record from, to and distance to the movements file, and long as it's not too erratic
             if abs(dist_moved)<LEARN_R_MAX_RECORDED_MOVE:
-                R[from_index, to_index] += dist_moved   # add distance in cm
-                C[from_index, to_index] += 1            # increment count
+                movementsfilewriter.writerow([bot.state_codes[from_index], bot.state_codes[to_index], round(dist_moved,2)])
+            else:
+                print("   Movement ignored - too big")
 
             # Update indices
             last_dist = dist        # remember last distance measurement
             from_index = to_index   # remember last position
 
-            sleep(LEARN_R_WAIT_BETWEEN_MOVES)
-
-            # Save to file on each iteration
-            np.save("r.npy", R)
-            np.save("c.npy", C)
+            sleep(RECORD_WAIT_BETWEEN_MOVES)
 
             if kb.last_key==" ":
                 break
 
+    with open(MOVEMENTS_FILENAME,'r') as movementsfile:
+        reader = csv.reader(movementsfile, delimiter = ",")
+        data = list(reader)
+        row_count = len(data)
 
-    print("Total movements", np.sum(C))        
+        print("Total movements", row_count)        
 
 
 # Main
 # -------------------------------------------------------------------------------------------------
 
+
+print("\nLearnbot Record Random")
+print("----------------------")
+
 # Compute the total number of states
 num_states = 1
 for s in SERVOS: num_states *= len(s) 
-
-# Rewards matrix
-# Will store our learnings about good end moves
-# Rows are 'from' state, columns are 'to' state
-# This will be filled in in first stage of training
-# R will accumulate the sum of the distance moved in each movement (from -> to state)
-R = np.zeros([num_states,num_states])
-
-# Counts matrix, keeps a count of how many times we visited the cell in the R matrix
-# This is used so we can average the rewards
-C = np.zeros([num_states,num_states])
 
 # Create the bot
 bot = Learnbot(SERVOS)
@@ -128,7 +96,7 @@ bot.wakeSlowly(2)
 print("Press SPACE to stop training")
 kb.startCheckKeys()
 
-# Run the training
-trainR(bot, R, C)
+# Run the recording
+recordRandom(bot)
 
 

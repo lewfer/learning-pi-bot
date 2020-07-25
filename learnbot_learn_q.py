@@ -13,6 +13,11 @@ from settings import *
 # Main
 # -------------------------------------------------------------------------------------------------
 
+
+print("\nLearnbot Learn Q")
+print("----------------")
+
+
 # R table - rows are from state, cols are to state, values are average movement recorded for the transition during the Learn R process
 # We only have one action (move) 
 """Sample
@@ -42,34 +47,39 @@ except:
     print("Could not load c.npy")
     
 # Compute mean rewards  
-rewards = rewards/counts
-rewards= np.nan_to_num(rewards)
+#with np.errstate(invalid='ignore', divide='ignore'):
+#    rewards = rewards/counts
+#    rewards = np.nan_to_num(rewards)
 
 print("Rewards table loaded")
+print("\nR")
 print(rewards)    
+print("\nC")
 print(counts)     
 
-# Put each row into a list - signifying a single action (move)
+# Put each row into a list 
+# We do this because the learning process assumes there are multiple actions, but we only have one (move)
 rewards = [[x] for x in rewards]
 
 # Print out csv
+"""
 print("\nInput rewards:")
 for row in rewards:
     for item in row[0]:
         print(str(round(item,2))+",", end="")
     print("")
+"""
 
+input("\nPress enter to start training Q:")
 
-input("Press enter to continue")
-
-# Number of states is number of rows
+# Number of states is number of rows in the rewards table
 num_states = len(rewards)
 
 # Create the R matrix
 R = Matrix(num_states=num_states, action_names=['M']) # M for Move
 R.setMatrix(rewards)
 R.matrix = R.matrix * R_SCALE #!!  I found that sometimes scaling the rewards helped
-print("\nR:")
+print("\nR for training:")
 print(R)
 
 # Create a q-learning agent with no goal state and learning rate of alpha
@@ -79,11 +89,12 @@ agent = QAgent(R, goal_state=-1, alpha=1)
 print("\nTraining...")
 agent.train(num_episodes=LEARN_Q_EPISODES)
 
-# Print out csv
+# Print out Q
 print("\nQ:")
 for row in agent.Q.matrix:
     for item in row[0]:
         print(str(round(item,2))+",", end="")
     print("")
 
+# Save Q matrix
 np.save("q.npy", agent.Q.matrix)

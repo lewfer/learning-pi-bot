@@ -52,12 +52,16 @@ class Learnbot():
             self.num_states *= len(angles)
             pin += 1
 
+        print("Learnbot")
+
         # Confirm number of states
         print("Num states", self.num_states)
 
         # Generate a list of state codes
         self.state_codes = [self.stateToCode(state) for state in range(self.num_states)]
         print("State codes:", self.state_codes)
+
+        print()
 
     def moveToDefaultPosition(self):  
         '''Move all joints to their default position.  This moves all servos instantly to their default positions.
@@ -84,8 +88,8 @@ class Learnbot():
         threads = []
         for joint in range(len(positions)):
             position = positions[joint]
-            #!!threads.append(Thread(target=self.joints[joint].moveTo, kwargs={"newAngle":self.angles[joint][position], "secs":JOINT_MOVE_SECS}))
-            threads.append(Thread(target=self.joints[joint].moveDirectTo, kwargs={"newAngle":self.angles[joint][position]}))
+            threads.append(Thread(target=self.joints[joint].moveTo, kwargs={"newAngle":self.angles[joint][position], "secs":JOINT_MOVE_SECS}))
+            #threads.append(Thread(target=self.joints[joint].moveDirectTo, kwargs={"newAngle":self.angles[joint][position]}))
 
         # Move all joints together
         runThreadsTogether(threads)
