@@ -1,6 +1,6 @@
 # Learnbot Record Random
 # 
-# Make random moves and recording  distance moved.
+# Make random moves and record distance moved.
 
 import numpy as np
 #import os
@@ -17,8 +17,6 @@ from learnbot import *
 import readkeys as kb
 
 import csv
-
-MOVEMENTS_FILENAME = 'movements' + str(len(SERVOS)) + '.csv'
 
 np.set_printoptions(suppress=True, edgeitems=30, linewidth=200, threshold=np.inf)
 

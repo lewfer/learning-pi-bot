@@ -12,7 +12,7 @@ bot = Learnbot(SERVOS)
 # Start it up
 bot.wakeSlowly(2) 
 
-if len(SERVOS)==2:
+if MODE==MODE_ONE_CLAW:
     # Make pre-determined movements
     for i in range(10):
         bot.moveTo('00')
@@ -24,7 +24,18 @@ if len(SERVOS)==2:
         bot.moveTo('10')
         sleep(1)
 
-elif len(SERVOS)==4:    # Make pre-determined movements
+elif MODE==MODE_TWO_LEGS:
+    for i in range(10):
+        bot.moveTo('0101') # Forward, down
+        sleep(1)
+        bot.moveTo('1111') # Move backward down
+        sleep(1)
+        bot.moveTo('1010') # Backward, up
+        sleep(1)
+        bot.moveTo('0000') # Forward up
+        sleep(1)    
+
+elif MODE==MODE_FOUR_SIMPLE_LEGS:
     delay = 0.2
     for i in range(10):
         #FL-FR-BL-BR

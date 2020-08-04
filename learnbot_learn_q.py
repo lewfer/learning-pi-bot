@@ -34,14 +34,14 @@ rewards = [
 # Load the rewards table saved by the learn R process
 rewards = None
 try:
-    r = np.load("r.npy")
+    r = np.load(R_FILENAME)
     rewards = r
 except:
     print("Could not load r.npy")
 
 # Load previously stored C matrix, if any
 try:
-    c = np.load("c.npy")
+    c = np.load(C_FILENAME)
     counts = c
 except:
     print("Could not load c.npy")
@@ -70,7 +70,7 @@ for row in rewards:
     print("")
 """
 
-input("\nPress enter to start training Q:")
+#input("\nPress enter to start training Q:")
 
 # Number of states is number of rows in the rewards table
 num_states = len(rewards)
@@ -97,4 +97,4 @@ for row in agent.Q.matrix:
     print("")
 
 # Save Q matrix
-np.save("q.npy", agent.Q.matrix)
+np.save(Q_FILENAME, agent.Q.matrix)

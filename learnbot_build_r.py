@@ -3,31 +3,32 @@
 # Takes movements from the movements file and creates the R and C matrix
 
 import numpy as np
+import warnings
 from time import sleep
 
 from settings import *
 
 from learnbot import *
-
+import sys
 
 import csv
 
-MOVEMENTS_FILENAME = 'movements' + str(len(SERVOS)) + '.csv'
-
-
 np.set_printoptions(suppress=True, edgeitems=30, linewidth=200, threshold=np.inf)
 
-
+warnings.filterwarnings('ignore')
 
 def trainR(bot, R, C, num_movements):
     '''Read movements from the file'''
 
     # Open the movements file 
     with open(MOVEMENTS_FILENAME, 'r', newline='') as movementsfile:
-        movementsfilewriter = csv.writer(movementsfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        #movementsfilewriter = csv.writer(movementsfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
         movementsfilereader = csv.reader(movementsfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         lines = list(movementsfilereader)
+
+        if len(lines) < num_movements:
+            print("Only", len(lines), "movements found.  You requested", num_movements)
         
         for line in lines[:min(num_movements,len(lines))]:
             from_index = bot.state(bot.codeToPositions(line[0]))
@@ -49,8 +50,8 @@ def trainR(bot, R, C, num_movements):
 
     print(R)
     # Save to file on each iteration
-    np.save("r.npy", R)
-    np.save("c.npy", C)
+    np.save(R_FILENAME, R)
+    np.save(C_FILENAME, C)
 
 
 
@@ -86,7 +87,11 @@ bot = Learnbot(SERVOS)
 # Start it up
 bot.wakeSlowly(2) 
 
-num_movements = int(input("How many movements to include?"))
+num_movements = 9999 #int(input("How many movements to include?"))
+if len(sys.argv) > 1:
+    num_movements = int(sys.argv[1])
+
+print("Training on", num_movements, "movements")
 
 # Run the training
 trainR(bot, R, C, num_movements)

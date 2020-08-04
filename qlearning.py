@@ -72,12 +72,26 @@ class Matrix():
         # Get the row corresponding to the given state, which gives the possible next states
         row = self.matrix[state]
 
-        # Find the states that have a reward >=0.  These are the only valid states. 
-        #actions, next_states = np.where(row >= 0)  #!! for some problems -ve is invalid, but not for all
-        actions, next_states = np.where(row == row)
+        # Find the states that have a reward >=0.  These are the only valid states.  
+        # np.where returns a tuple
+        actions, next_states = np.where(row >= 0)
 
         # Zip up tuples containing the action,next_state pairs
         return list(zip(actions, next_states))
+
+    def allActions(self, state):
+        """Finds the all actions from the given state"""        
+
+        # Get the row corresponding to the given state, which gives the possible next states
+        row = self.matrix[state]
+
+        # Find the states that have a reward >=0.  These are the only valid states.  
+        # np.where returns a tuple
+        actions, next_states = np.where(np.logical_or(row != 0,row==0))
+
+        # Zip up tuples containing the action,next_state pairs
+        return list(zip(actions, next_states))
+
 
     def bestActions(self, state):
         """Finds the best actions from the given state"""
@@ -86,7 +100,7 @@ class Matrix():
         row = self.matrix[state]
 
         # Find the best (i.e. max) value in the row
-        best_value = np.max(row)
+        best_value = np.nanmax(row)
 
         # Find the actions corresponding to the best value
         actions, next_states = np.where(row == best_value)
@@ -145,8 +159,14 @@ class QAgent():
         # Get the possible actions from the current state
         actions = self.R.possibleActions(self.current_state)
 
+        # If the above returned no actions, get all actions, not just possible ones
+        if len(actions)==0:
+            actions = self.R.allActions(self.current_state)
+
         # Choose one at random and return it
         action = random.choice(actions)
+
+
         return action 
 
 
@@ -167,6 +187,17 @@ class QAgent():
         action = random.choice(actions)     
         return action
 
+    def chooseBestActionWithRandomness(self):
+        """Choose the best action from the possible actions from the current state, but with some randomness to choose less good options sometimes"""
+        # Get the possible actions from the current state
+        possible_actions = self.R.possibleActions(self.current_state)
+
+        print(possible_actions)
+
+        
+        # Choose one of the actions at random and return it
+        action = random.choice(possible_actions)     
+        return action
 
     def updateQ(self, action, next_state):
         """Update the Q table based on the action.  This is the key of the learning part"""
@@ -176,6 +207,10 @@ class QAgent():
         
         current_r = self.R.getValue(self.current_state, action, next_state)
         current_q = self.Q.getValue(self.current_state, action, next_state)
+
+        # Sometimes we get nulls.  We can't do anything with them
+        if np.isnan(current_r):
+            return
 
         # Q learning formula - update the Q table current state with a little of the reward from the future
 
@@ -239,7 +274,7 @@ class QAgent():
         while self.current_state != self.goal_state:
 
             # Choose the best action based on the Q table
-            action, next_state = self.chooseBestAction()
+            action, next_state = self.chooseBestActionWithRandomness()
             
             # Keep a track of where we've been
             path.append((self.R.action_names[action], next_state))

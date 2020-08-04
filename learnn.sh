@@ -1,0 +1,1 @@
+python3 learnbot_learn_deciles.py
