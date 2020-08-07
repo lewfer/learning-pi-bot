@@ -7,7 +7,7 @@ MODE_TWO_LEGS = 1               # two legs with 2 servos each
 MODE_FOUR_SIMPLE_LEGS = 2       # four legs with one servo each
 
 # Selected mode - set to one of the above
-MODE = MODE_ONE_CLAW
+MODE = MODE_TWO_LEGS
 
 if MODE==MODE_ONE_CLAW:
     MODE_NAME = "one_claw"
@@ -41,9 +41,9 @@ elif MODE==MODE_FOUR_SIMPLE_LEGS:
 #SERVO_PIN_START = 2
 
 # Whether to always choose the best option or to have some randomness
-#MOVE_CHOICE = "best"
-#MOVE_CHOICE = "q"
-MOVE_CHOICE = "geom"
+MOVE_CHOICE = "best" # always choose the best movement
+#MOVE_CHOICE = "geom"  # choose any valid movement, applying more weight to the best movements, basing on a geometric progress
+#MOVE_CHOICE = "q"    # choose any valid movement, applying more weight to the best movements, basing on the Q value
 
 
 DATA_DIR = 'data_' + str(MODE_NAME)

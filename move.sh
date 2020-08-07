@@ -1,0 +1,1 @@
+python3 learnbot_move_q.py q$1.npy

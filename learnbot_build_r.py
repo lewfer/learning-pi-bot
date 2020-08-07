@@ -30,9 +30,11 @@ def trainR(bot, R, C, num_movements):
         if len(lines) < num_movements:
             print("Only", len(lines), "movements found.  You requested", num_movements)
         
+        # Append movement to list in appropriate cell
         for line in lines[:min(num_movements,len(lines))]:
-            from_index = bot.state(bot.codeToPositions(line[0]))
-            to_index = bot.state(bot.codeToPositions(line[1]))
+            num_servos = len(SERVOS)
+            from_index = bot.state(bot.codeToPositions(line[0].zfill(num_servos)))
+            to_index = bot.state(bot.codeToPositions(line[1].zfill(num_servos)))
             dist_moved = float(line[2])
 
             print(from_index, to_index, dist_moved)
@@ -43,7 +45,7 @@ def trainR(bot, R, C, num_movements):
 
                 R[from_index, to_index].append(dist_moved)
 
-        # Take mean of 
+        # Take median movement movements in the list of each cell
         print(R)
         R = np.vectorize(lambda x: np.median(x))(R)
 

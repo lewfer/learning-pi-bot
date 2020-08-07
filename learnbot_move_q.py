@@ -49,7 +49,7 @@ def moveNextBest(bot, state):
     # If we have more than one, choose one at random
     next_state = random.choice(next_states)    
 
-    print("Move to", next_state)
+    print("Move to", next_state, "(", bot.stateToCode(next_state), ")")
 
     # Move to that position
     bot.moveTo(bot.state_codes[next_state])
@@ -122,7 +122,7 @@ def moveNextBestWithRandomness(bot, state):
     # Choose one at random
     next_state = np.random.choice(possible_states, p=probs)   
 
-    print("Move to", next_state)
+    print("Move to", next_state, "(", bot.stateToCode(next_state), ")")
 
     # Move to that position
     bot.moveTo(bot.state_codes[next_state])

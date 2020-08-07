@@ -24,8 +24,8 @@ if lines is None:
 else:   
     step = int(lines / DIVISIONS)
 
-    percent = 10
-    for build_lines in range(step, lines+1, step):
+    percent = 0
+    for build_lines in range(0, lines+1, step):
         if percent==100:
             use_lines = lines
         else:

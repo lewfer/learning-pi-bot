@@ -17,6 +17,6 @@ bot.wakeSlowly(2)
 
 # View all the positions in order
 for state in bot.state_codes:
-    print("Position", state)
     bot.moveTo(state)
-    sleep(MOVE_Q_WAIT_BETWEEN_MOVES)
+    print("Position", state)
+    sleep(5)
